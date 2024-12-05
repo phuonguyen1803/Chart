@@ -3,160 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Heartbeat Data Chart</title>
-    <!-- Highcharts Libraries -->
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    <!-- XLSX Library for Excel Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-    <!-- Era Widget Library -->
-    <script src="https://www.unpkg.com/@eohjsc/era-widget@1.0.14/src/index.js"></script>
-    <style>
-        .highcharts-figure, .highcharts-data-table table {
-            min-width: 320px;
-            max-width: 1000px;
-            margin: 1em auto;
-        }
-        #container {
-            height: 400px;
-        }
-        .highcharts-data-table table {
-            font-family: Verdana, sans-serif;
-            border-collapse: collapse;
-            margin: 10px auto;
-            text-align: center;
-            width: 100%;
-        }
-        .highcharts-data-table th, .highcharts-data-table td {
-            padding: 0.5em;
-        }
-        .highcharts-data-table tr:nth-child(even) {
-            background: #a82c72;
-        }
-        .highcharts-data-table tr:hover {
-            background: #829DD8;
-        }
-        .highcharts-tooltip {
-            font-size: 20px;
-        }
-    </style>
+    <title>JSFiddle Embed Example</title>
 </head>
 <body>
-    <figure class="highcharts-figure">
-        <div id="container"></div>
-        <p class="highcharts-description">Chart showing heartbeats data updating every second.</p>
-        <button id="exportButton">Export to Excel</button>
-    </figure>
-    <input type="checkbox" id="HeartBeat" /> Heartbeat Active
-    <script>
-        const eraWidget = new EraWidget();
-        let config = null;
-        let heartbeatValue = 0; 
-        const dataBuffer = [];
+    <h1>Embed JSFiddle Example</h1>
+    <p>Dưới đây là một đoạn code được nhúng từ JSFiddle:</p>
 
-        // Initialize Era Widget
-        eraWidget.onConfiguration((configuration) => {
-            config = configuration.realtime_configs[0];
-        });
+    <!-- Embed JSFiddle -->
+    <iframe 
+        width="100%" 
+        height="500" 
+        src="https://jsfiddle.net/api/post/library/pure/" 
+        allowfullscreen="allowfullscreen" 
+        frameborder="0">
+    </iframe>
 
-        eraWidget.onValues((values) => {
-            const input = document.getElementById('HeartBeat');
-            heartbeatValue = values[config.id].value || 0;
-            input.checked = heartbeatValue > 0;
-        });
-
-        eraWidget.ready();
-
-        // Highcharts configuration
-        const onChartLoad = function () {
-            const chart = this;
-            const series = chart.series[0];
-
-            setInterval(() => {
-                const x = (new Date()).getTime();
-                const y = heartbeatValue;
-                series.addPoint([x, y], true, true);
-                dataBuffer.push([x, y]);
-
-                // Limit data buffer to 30 minutes
-                const thirtyMinutesAgo = x - 1800 * 1000;
-                while (dataBuffer.length > 0 && dataBuffer[0][0] < thirtyMinutesAgo) {
-                    dataBuffer.shift();
-                }
-            }, 1000);
-        };
-
-        // Initialize chart data
-        const data = (function () {
-            const initialData = [];
-            const time = new Date().getTime();
-            for (let i = -19; i <= 0; i++) {
-                initialData.push({
-                    x: time + i * 1000,
-                    y: 0
-                });
-            }
-            return initialData;
-        }());
-
-        // Create Highcharts instance
-        Highcharts.chart('container', {
-            chart: {
-                type: 'areaspline',
-                events: { load: onChartLoad }
-            },
-            time: { useUTC: false },
-            title: { text: 'Live Heartbeat Data' },
-            accessibility: {
-                announceNewData: {
-                    enabled: true,
-                    minAnnounceInterval: 15000,
-                    announcementFormatter: function (allSeries, newSeries, newPoint) {
-                        return newPoint ? 'New point added. Value: ' + newPoint.y : false;
-                    }
-                }
-            },
-            xAxis: {
-                type: 'datetime',
-                tickPixelInterval: 150
-            },
-            yAxis: {
-                title: { text: 'Heartbeat' },
-                min: 0,
-                max: 130,
-                tickInterval: 10
-            },
-            tooltip: {
-                headerFormat: '<b>{series.name}</b><br/>',
-                pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
-            },
-            legend: { enabled: false },
-            exporting: { enabled: false },
-            series: [{
-                name: 'Heartbeats',
-                data,
-                fillColor: {
-                    linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
-                    stops: [
-                        [0, Highcharts.getOptions().colors[6]],
-                        [1, Highcharts.color(Highcharts.getOptions().colors[6]).setOpacity(0).get('rgba')]
-                    ]
-                }
-            }]
-        });
-
-        // Export data to Excel
-        document.getElementById('exportButton').addEventListener('click', function () {
-            const worksheet = XLSX.utils.json_to_sheet(dataBuffer.map(point => ({
-                Time: new Date(point[0]).toLocaleString(),
-                Heartbeat: point[1]
-            })));
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Heartbeats');
-            XLSX.writeFile(workbook, 'heartbeat_data.xlsx');
-        });
-    </script>
+    <p>Bạn có thể chỉnh sửa hoặc chạy mã trực tiếp trên <a href="https://jsfiddle.net" target="_blank">JSFiddle</a>.</p>
 </body>
 </html>
